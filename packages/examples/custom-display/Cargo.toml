@@ -1,0 +1,46 @@
+[package]
+name = "progresshub-custom-display-example"
+version = "0.1.0"
+edition = "2021"
+authors = ["David Maple <david@cyrup.ai>"]
+license = "MIT"
+description = "Example showing how to use ProgressHub with a custom progress display implementation"
+repository = "https://github.com/xetdata/progresshub"
+readme = "README.md"
+keywords = ["example", "custom", "display", "progress", "implementation"]
+categories = ["command-line-utilities", "examples"]
+
+[dependencies]
+# Local dependency on the progresshub library
+progresshub = { path = "../../progresshub" }
+
+# Async runtime
+tokio = { version = "1.47.1", features = ["full", "sync"] }
+
+# Error handling
+anyhow = "1.0.98"
+
+# Logging
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+
+# Progress bar and display
+indicatif = "0.18.0"
+
+# Channel implementation
+flume = "0.11.1"
+
+# For pretty printing JSON
+serde_json = "1.0.142"
+serde = { version = "1.0.219", features = ["derive"] }
+
+# Required for ProgressDisplay trait
+async-trait = "0.1.88"
+
+# Console and terminal control
+console = "0.16.0"
+colored = "3.0.0"
+crossterm = { version = "0.29.0", features = ["event-stream"] }
+
+# Lock-free atomic operations for blazing-fast performance
+arc-swap = "1.7.1"

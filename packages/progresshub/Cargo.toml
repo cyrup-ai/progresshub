@@ -1,0 +1,56 @@
+[package]
+name = "progresshub"
+version = "0.1.0"
+edition = "2024"
+authors = ["David Maple <david@cyrup.ai>"]
+license = "MIT"
+description = "Unified CLI/TUI interface for ProgressHub model downloader"
+repository = "https://github.com/xetdata/progresshub"
+readme = "README.md"
+keywords = ["cli", "tui", "huggingface", "downloader", "progress", "unified"]
+categories = ["command-line-utilities", "machine-learning"]
+
+[lib]
+name = "progresshub"
+path = "src/lib.rs"
+crate-type = ["lib"]
+
+[[bin]]
+name = "progresshub"
+path = "src/main.rs"
+
+[dependencies]
+# Local dependencies for mode delegation
+progresshub-cli = { path = "../cli" }
+progresshub-tui = { path = "../tui", package = "progresshub-tui", optional = true }
+progresshub-config = { path = "../config" }
+progresshub-progress = { path = "../progress" }
+# lib_bandwydth = { path = "../../../bandwydth" }  # Temporarily disabled due to async-graphql conflict
+
+# Channel communication
+flume = "0.11.1"
+futures-util = "0.3.31"
+dirs = "6.0.0"
+
+# Argument parsing with derive features
+clap = { version = "4.5.47", features = ["derive"] }
+
+# Error handling and async runtime
+anyhow = "1.0.99"
+tokio = { version = "1.47.1", features = ["full"] }
+
+# Structured logging
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+tracing-appender = "0.2.3"
+termcolor = "1.4.1"
+
+# Serialization for OneOrMany support
+serde = { version = "1.0.219", features = ["derive"] }
+sha1 = "0.10.6"
+sha2 = "0.10.9"
+
+[features]
+default = ["std", "tui"]
+std = []
+tui = ["progresshub-tui"]

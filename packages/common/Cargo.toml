@@ -1,0 +1,32 @@
+[package]
+name = "progresshub-common"
+version = "0.1.0"
+edition = "2024"
+authors = ["David Maple <david@cyrup.ai>"]
+license = "MIT"
+description = "Common types and traits for progresshub"
+repository = "https://github.com/xetdata/progresshub"
+readme = "README.md"
+keywords = ["progress", "events", "types", "shared", "common"]
+categories = ["data-structures", "development-tools"]
+
+[dependencies]
+# Event system
+flume = "0.11.1"
+
+# Zero-allocation streaming primitives
+ystream = { path = "../../ystream" }
+
+# Serialization
+serde = { version = "1.0.219", features = ["derive"] }
+
+# Error handling
+anyhow = "1.0.98"
+
+# Hash generation for model collision prevention
+sha1 = "0.10.6"
+hex = "0.4.3"
+
+[lib]
+path = "src/lib.rs"
+name = "progresshub_common"

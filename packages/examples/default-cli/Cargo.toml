@@ -1,0 +1,25 @@
+[package]
+name = "progresshub-default-cli-example"
+version = "0.1.0"
+edition = "2024"
+authors = ["David Maple <david@cyrup.ai>"]
+license = "MIT"
+description = "Example showing how to use ProgressHub with the default CLI progress display"
+repository = "https://github.com/xetdata/progresshub"
+readme = "README.md"
+keywords = ["example", "cli", "progress", "default", "demo"]
+categories = ["command-line-utilities", "examples"]
+
+[dependencies]
+# Local dependency on the progresshub library
+progresshub = { path = "../../progresshub" }
+
+# Async runtime
+tokio = { version = "1.47.1", features = ["full"] }
+
+# Error handling
+anyhow = "1.0.98"
+
+# Logging
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }

@@ -1,0 +1,28 @@
+{
+  "file_path": "/Volumes/samsung_t9/progresshub/models/.gitattributes.part",
+  "total_size": 391,
+  "completed_chunks": [],
+  "failed_chunks": [
+    {
+      "start": 0,
+      "end": 391,
+      "retry_count": 1,
+      "last_failed_at": {
+        "secs_since_epoch": 1754229308,
+        "nanos_since_epoch": 528776000
+      },
+      "error_message": "HTTP request failed: error sending request for url (https://huggingface.co/microsoft/DialoGPT-medium/resolve/main/.gitattributes)"
+    }
+  ],
+  "expected_file_hash": "ae8c63daedbd4206d7d40126955d4e6ab1c80f8f",
+  "started_at": {
+    "secs_since_epoch": 1754227867,
+    "nanos_since_epoch": 552459000
+  },
+  "updated_at": {
+    "secs_since_epoch": 1754229308,
+    "nanos_since_epoch": 528776000
+  },
+  "manifest_version": "size:391|hash:ae8c63daedbd4206d7d40126955d4e6ab1c80f8f|rev:W/\"7f8-0VRjmmdlGMJN2k1ddXkpK/ehFGQ|modified:W/\"7f8-0VRjmmdlGMJN2k1ddXkpK/ehFGQ",
+  "expected_chunk_size": 1048576
+}

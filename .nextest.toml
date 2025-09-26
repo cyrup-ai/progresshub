@@ -1,0 +1,70 @@
+# ProgressHub Nextest Configuration
+# Optimized for blazing-fast parallel test execution with zero-allocation constraints
+
+[profile.default]
+# Maximum parallel test execution for blazing-fast performance
+test-threads = "num-cpus"
+retries = 2
+failure-output = "immediate-final"
+success-output = "never"
+status-level = "retry"
+
+# Timeout configuration for performance-critical tests
+slow-timeout = { period = "60s", terminate-after = 2 }
+leak-timeout = "100ms"
+
+[profile.default.junit]
+path = "target/nextest/junit.xml"
+report-name = "progresshub-tests"
+
+# Performance-optimized test groups
+[test-groups]
+# Blazing-fast unit tests (zero allocation, no I/O)
+unit = { max-threads = 8 }
+# Integration tests (may involve I/O but still fast)
+integration = { max-threads = 4 }
+# Performance benchmarks
+perf = { max-threads = 1 }
+
+# Test filtering and organization
+[[profile.default.overrides]]
+filter = 'test(test_.*_performance)'
+test-group = 'perf'
+slow-timeout = { period = "120s", terminate-after = 3 }
+
+[[profile.default.overrides]]
+filter = 'test(integration_.*)'
+test-group = 'integration'
+
+[[profile.default.overrides]]
+filter = 'test(test_.*)'
+test-group = 'unit'
+
+# CI-optimized profile for production deployment
+[profile.ci]
+test-threads = 2
+retries = 3
+failure-output = "final"
+success-output = "never"
+slow-timeout = { period = "30s", terminate-after = 1 }
+
+# Development profile for rapid iteration
+[profile.dev]
+test-threads = 1
+retries = 0
+failure-output = "immediate"
+success-output = "immediate"
+slow-timeout = { period = "10s", terminate-after = 1 }
+
+# Performance benchmarking profile
+[profile.bench]
+test-threads = 1
+retries = 0
+failure-output = "immediate-final"
+success-output = "final"
+slow-timeout = { period = "300s", terminate-after = 1 }
+
+# Test discovery configuration
+[profile.default.scripts]
+# Ensure all tests use production-ready constraints
+setup = "echo 'Running ProgressHub tests with zero-allocation constraints'"

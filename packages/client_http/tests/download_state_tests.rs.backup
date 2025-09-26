@@ -1,0 +1,116 @@
+//! Tests for DownloadState functionality
+//!
+//! This module contains comprehensive tests for the download state management
+//! including chunk completion tracking, retry logic, and state persistence.
+//! Extracted from src/download_state.rs for production code organization.
+
+use progresshub_client_http::download_state::DownloadState;
+use tempfile::TempDir;
+
+fn create_test_state() -> DownloadState {
+    DownloadState {
+        total_size: 1000, // Set a reasonable size for testing
+        ..Default::default()
+    }
+}
+
+#[test]
+fn test_mark_chunk_complete() {
+    let mut state = create_test_state();
+
+    // Mark first chunk as complete
+    state
+        .mark_chunk_complete(0, 100, "hash1".to_string())
+        .expect("Failed to mark chunk complete");
+    assert_eq!(state.bytes_downloaded(), 100);
+    assert_eq!(state.progress_percentage(), 10.0);
+    assert!(!state.is_download_complete());
+
+    // Mark second chunk as complete
+    state
+        .mark_chunk_complete(100, 200, "hash2".to_string())
+        .expect("Failed to mark chunk complete");
+    assert_eq!(state.bytes_downloaded(), 200);
+    assert_eq!(state.progress_percentage(), 20.0);
+}
+
+#[test]
+fn test_pending_ranges() {
+    let mut state = create_test_state();
+
+    // Initially all bytes are pending
+    let pending = state.get_pending_ranges();
+    assert_eq!(pending, vec![(0, 1000)]);
+
+    // After completing first chunk
+    state
+        .mark_chunk_complete(0, 100, "hash1".to_string())
+        .expect("Failed to mark chunk complete");
+    let pending = state.get_pending_ranges();
+    assert_eq!(pending, vec![(100, 1000)]);
+
+    // After completing chunk in the middle
+    state
+        .mark_chunk_complete(200, 300, "hash2".to_string())
+        .expect("Failed to mark chunk complete");
+    let pending = state.get_pending_ranges();
+    assert_eq!(pending, vec![(100, 200), (300, 1000)]);
+}
+
+#[test]
+fn test_failed_chunk_retry() {
+    let mut state = create_test_state();
+
+    // Mark chunk as failed
+    state
+        .mark_chunk_failed(0, 100, Some("Network error".to_string()))
+        .expect("Failed to mark chunk failed");
+    assert_eq!(state.failed_chunks.len(), 1);
+    assert_eq!(state.failed_chunks[0].retry_count, 1);
+
+    // Mark same chunk as failed again
+    state
+        .mark_chunk_failed(0, 100, Some("Timeout".to_string()))
+        .expect("Failed to mark chunk failed");
+    assert_eq!(state.failed_chunks.len(), 1);
+    assert_eq!(state.failed_chunks[0].retry_count, 2);
+
+    // Check retryable chunks
+    let retryable = state.get_retryable_chunks();
+    assert_eq!(retryable.len(), 1);
+
+    // After max retries, should be permanently failed
+    state
+        .mark_chunk_failed(0, 100, Some("Final error".to_string()))
+        .expect("Failed to mark chunk failed");
+    let retryable = state.get_retryable_chunks();
+    let permanent = state.get_permanently_failed_chunks();
+    assert_eq!(retryable.len(), 0);
+    assert_eq!(permanent.len(), 1);
+}
+
+#[tokio::test]
+async fn test_state_persistence() {
+    let temp_dir = TempDir::new().expect("Failed to create temp dir");
+    let file_path = temp_dir.path().join("test_file.bin");
+
+    // Create and save state
+    let mut state = DownloadState {
+        file_path: file_path.clone(), // Set file path for saving
+        total_size: 1000,             // Set a reasonable size for testing
+        ..Default::default()
+    };
+    state
+        .mark_chunk_complete(0, 100, "hash1".to_string())
+        .expect("Failed to mark chunk complete");
+    state.save_to_file().await.expect("Failed to save state");
+
+    // Load state and verify
+    let loaded_state = DownloadState::load_from_file(&file_path)
+        .await
+        .expect("Failed to load state");
+    assert_eq!(loaded_state.file_path, state.file_path);
+    assert_eq!(loaded_state.total_size, state.total_size);
+    assert_eq!(loaded_state.bytes_downloaded(), 100);
+    assert_eq!(loaded_state.completed_chunks.len(), 1);
+}

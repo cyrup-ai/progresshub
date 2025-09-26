@@ -1,0 +1,67 @@
+[package]
+name = "progresshub-cli"
+version = "0.1.0"
+edition = "2024"
+authors = ["David Maple <david@cyrup.ai>"]
+license = "MIT"
+description = "Command-line interface for ProgressHub HuggingFace model downloader"
+repository = "https://github.com/xetdata/progresshub"
+readme = "README.md"
+keywords = ["cli", "huggingface", "downloader", "progress", "command-line"]
+categories = ["command-line-utilities", "machine-learning"]
+
+
+
+[dependencies]
+# Zero-allocation streaming primitives - replacing crossterm EventStream
+ystream = { workspace = true }
+# MessageChunk trait support for ystream
+cyrup_sugars = { git = "https://github.com/cyrup-ai/cyrup-sugars", branch = "main" }
+
+# Local dependencies - only config and progress for pure display logic
+progresshub-config = { path = "../config" }
+progresshub-progress = { path = "../progress" }
+
+
+# Error handling
+anyhow = "1.0.98"
+thiserror = "2.0.12"
+
+# Async runtime
+tokio = { version = "1.47.1", features = ["full"] }
+
+# Logging
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+
+# CLI argument parsing
+clap = { version = "4.5.42", features = ["derive"] }
+
+# Terminal UI and display - keep display-related dependencies
+console = "0.16.0"
+colored = "3.0.0"
+
+# Serialization
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.142"
+
+# Utilities
+dirs = "6.0.0"
+
+# Concurrency
+flume = "0.11.1"
+
+# Display and terminal utilities
+chrono = { version = "0.4.41", features = ["serde"] }
+termcolor = "1.4.1"
+atty = "0.2.14"
+term_size = "0.3.2"
+lazy_static = "1.5.0"
+regex = "1.11.1"
+futures = "0.3.31"
+tokio-stream = "0.1.17"
+im = "15.1.0"
+
+[features]
+default = ["std"]
+std = []

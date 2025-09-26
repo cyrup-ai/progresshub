@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../quyc"
+		},
+		{
+			"path": "../ystream"
+		}
+	],
+	"settings": {}
+}
