@@ -190,7 +190,7 @@ impl<'a> Widget for OverallProgressWidget<'a> {
             ))
             .style(CyrupTheme::gauge_style(progress_ratio))
             .percent(progress_percent)
-            .label(self.progress_label().unwrap_or_else(|| String::new()))
+            .label(self.progress_label().unwrap_or_default())
             .use_unicode(true); // Enable beautiful Unicode block characters
 
         gauge.render(area, buf);

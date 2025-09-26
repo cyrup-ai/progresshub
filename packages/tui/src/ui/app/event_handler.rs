@@ -171,13 +171,12 @@ impl App {
                     // Space to expand/collapse model (update model_list_state)
                     KeyCode::Char(' ') => {
                         // Use ProgressCalculator methods instead of direct field access
-                        if let Some(focused_idx) = self.state.focused_model {
-                            if let Some(model_name) =
+                        if let Some(focused_idx) = self.state.focused_model
+                            && let Some(model_name) =
                                 self.state.get_model_name_at_index(focused_idx)
                             {
                                 self.model_list_state.toggle_expanded(&model_name);
                             }
-                        }
                     }
 
                     _ => {}

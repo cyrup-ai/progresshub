@@ -424,7 +424,7 @@ impl FilesystemProgressEvaluator {
         let expected_range_count = if expected_total_size == 0 || expected_chunk_size == 0 {
             0
         } else {
-            ((expected_total_size + expected_chunk_size - 1) / expected_chunk_size) as usize
+            expected_total_size.div_ceil(expected_chunk_size) as usize
         };
         
         debug!(
@@ -628,10 +628,7 @@ impl FilesystemProgressEvaluator {
     /// * `reported_bytes` - Bytes downloaded reported by client
     /// * `total_bytes` - Total bytes expected
     ///
-
-
     /// Asynchronously validate filesystem against manifest
-    ///
     /// Performs comprehensive filesystem inventory checking to verify all downloaded
     /// files match their expected sizes from the manifest. This is the ACTUAL validation
     /// that replaces misleading "all downloads completed successfully" messages.
@@ -1016,8 +1013,8 @@ impl FilesystemProgressEvaluator {
                     let entry_path = entry.path();
                     
                     // Check if this is a requested model directory
-                    if let Some(dir_name) = entry_path.file_name().and_then(|n| n.to_str()) {
-                        if dir_name.starts_with("models--") && entry_path.is_dir() {
+                    if let Some(dir_name) = entry_path.file_name().and_then(|n| n.to_str())
+                        && dir_name.starts_with("models--") && entry_path.is_dir() {
                             // Only process this directory if it matches one of the requested models
                             if requested_cache_dirs.contains(dir_name) {
                                 // Extract model ID from directory name: "models--microsoft--DialoGPT-medium"
@@ -1061,7 +1058,6 @@ impl FilesystemProgressEvaluator {
                                 );
                             }
                         }
-                    }
                 }
             },
             Err(e) => {

@@ -189,7 +189,7 @@ impl Stream for DebouncedProgressStream {
                             
                             // Increment queue length counter with validation
                             MemoryOrderingValidator::validate_relaxed_counter_operation(
-                                &this.queue_len_counter,
+                                this.queue_len_counter,
                                 "queue_length_increment",
                                 CounterDirection::Bidirectional,
                             );
@@ -240,14 +240,14 @@ impl Stream for DebouncedProgressStream {
                     // Decrement atomic counters for each pop to maintain consistency
                     // **Memory Ordering**: Relaxed ordering for counter decrements - consistency maintained by event queue ordering
                     MemoryOrderingValidator::validate_relaxed_counter_operation(
-                        &this.queue_capacity_counter,
+                        this.queue_capacity_counter,
                         "queue_capacity_decrement_coalesce",
                         CounterDirection::Bidirectional,
                     );
                     this.queue_capacity_counter.fetch_sub(1, documentation::queue_length_ordering());
                     
                     MemoryOrderingValidator::validate_relaxed_counter_operation(
-                        &this.queue_len_counter,
+                        this.queue_len_counter,
                         "queue_length_decrement_coalesce",
                         CounterDirection::Bidirectional,
                     );
@@ -271,14 +271,14 @@ impl Stream for DebouncedProgressStream {
                     // Decrement counters with validated relaxed ordering
                     // **Memory Ordering**: Relaxed ordering sufficient for queue management counters
                     MemoryOrderingValidator::validate_relaxed_counter_operation(
-                        &this.queue_capacity_counter,
+                        this.queue_capacity_counter,
                         "queue_capacity_decrement_normal",
                         CounterDirection::Bidirectional,
                     );
                     this.queue_capacity_counter.fetch_sub(1, documentation::queue_length_ordering());
                     
                     MemoryOrderingValidator::validate_relaxed_counter_operation(
-                        &this.queue_len_counter,
+                        this.queue_len_counter,
                         "queue_length_decrement_normal",
                         CounterDirection::Bidirectional,
                     );

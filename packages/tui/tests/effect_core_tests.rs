@@ -38,9 +38,9 @@ fn test_intensity_enhanced_color() {
 fn test_level_color_params() {
     // Test all levels return valid HSL parameters
     let (h, s, l) = DownloadEffects::level_color_params(DownloadLevel::Low);
-    assert!(h >= 0.0 && h <= 360.0);
-    assert!(s >= 0.0 && s <= 1.0);
-    assert!(l >= 0.0 && l <= 1.0);
+    assert!((0.0..=360.0).contains(&h));
+    assert!((0.0..=1.0).contains(&s));
+    assert!((0.0..=1.0).contains(&l));
 
     // Test parameters are different for different levels
     let low_params = DownloadEffects::level_color_params(DownloadLevel::Low);

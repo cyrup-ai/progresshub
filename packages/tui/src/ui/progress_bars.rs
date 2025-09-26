@@ -43,8 +43,10 @@ pub enum ProgressStatus {
 
 /// Progress bar type for effect selection (Copy for zero allocation)
 #[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Default)]
 pub enum ProgressBarType {
     /// Animated flow of data chunks moving left-to-right
+    #[default]
     Flow,
     /// Rhythmic pulsing with intensity matching download speed
     Pulse,
@@ -152,11 +154,6 @@ impl ProgressStatus {
     }
 }
 
-impl Default for ProgressBarType {
-    fn default() -> Self {
-        Self::Flow
-    }
-}
 
 impl ProgressBarType {
     /// Get effect duration for this bar type

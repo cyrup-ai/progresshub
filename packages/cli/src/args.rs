@@ -132,13 +132,12 @@ impl CliArgs {
         }
 
         // Validate quantization format if specified
-        if let Some(ref quant) = self.quant {
-            if quant.trim().is_empty() {
+        if let Some(ref quant) = self.quant
+            && quant.trim().is_empty() {
                 return Err(crate::CliError::Arguments(
                     "Quantization format cannot be empty".to_string(),
                 ));
             }
-        }
 
         // Validate output directory exists if specified
         if let Some(ref output_dir) = self.output_dir {
@@ -157,16 +156,14 @@ impl CliArgs {
         }
 
         // Validate cache directory if specified
-        if let Some(ref cache_dir) = self.cache_dir {
-            if let Some(parent) = cache_dir.parent() {
-                if !parent.exists() {
+        if let Some(ref cache_dir) = self.cache_dir
+            && let Some(parent) = cache_dir.parent()
+                && !parent.exists() {
                     return Err(crate::CliError::Arguments(format!(
                         "Cache directory parent does not exist: {}",
                         parent.display()
                     )));
                 }
-            }
-        }
 
         Ok(())
     }

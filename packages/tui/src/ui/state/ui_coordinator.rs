@@ -80,8 +80,10 @@ impl UiState {
 
 /// Status of a download operation
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Default)]
 pub enum DownloadStatus {
     /// Waiting to start
+    #[default]
     Pending,
     /// Connecting to server
     Connecting,
@@ -93,11 +95,6 @@ pub enum DownloadStatus {
     Failed,
 }
 
-impl Default for DownloadStatus {
-    fn default() -> Self {
-        Self::Pending
-    }
-}
 
 impl DownloadStatus {
     /// Check if the download is in progress

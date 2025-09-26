@@ -50,7 +50,7 @@ resolver = "3"
 # Force version resolution to latest compatible versions
 [workspace.dependencies]
 # Zero-allocation streaming primitives - alternative to tokio runtimes
-ystream = { path = "./ystream" }
+ystream = { git = "https://github.com/cyrup-ai/ystream", branch = "main" }
 
 crypto-bigint = "=0.7.0-rc.0"
 cedar-policy = "=2.5.0"

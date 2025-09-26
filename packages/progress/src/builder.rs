@@ -15,8 +15,8 @@ use std::path::PathBuf;
 
 /// Get model cache directory path  
 fn get_model_cache_dir(model_id: &str) -> anyhow::Result<PathBuf> {
-    let cache_root = PathBuf::from(get_hf_hub_cache());
-    let model_cache_dir = cache_root.join(&format!("models--{}", model_id.replace('/', "--")));
+    let cache_root = get_hf_hub_cache();
+    let model_cache_dir = cache_root.join(format!("models--{}", model_id.replace('/', "--")));
     Ok(model_cache_dir)
 }
 use flume::{Receiver, Sender};

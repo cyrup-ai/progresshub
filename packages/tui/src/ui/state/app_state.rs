@@ -13,8 +13,10 @@ use super::focus_manager::{BottomBarFocus, FocusState, FocusStates};
 
 /// Represents the completion state for visual confirmation flow
 #[derive(Debug, Clone, PartialEq)]
+#[derive(Default)]
 pub enum CompletionState {
     /// Normal active state - downloads in progress
+    #[default]
     Active,
     /// Visual completion state - showing 100% for confirmation
     VisualCompletion,
@@ -24,11 +26,6 @@ pub enum CompletionState {
     Exiting,
 }
 
-impl Default for CompletionState {
-    fn default() -> Self {
-        Self::Active
-    }
-}
 
 /// Represents the current state of the application UI.
 #[derive(Debug)]
@@ -418,6 +415,6 @@ impl AppState {
         self.current_progress_calculator
             .as_ref()
             .map(|calc| calc.get_models_for_rendering())
-            .unwrap_or_else(Vec::new)
+            .unwrap_or_default()
     }
 }

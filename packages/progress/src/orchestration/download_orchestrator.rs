@@ -26,6 +26,15 @@ use std::sync::OnceLock;
 
 static GLOBAL_ORCHESTRATOR: OnceLock<Arc<tokio::sync::Mutex<DownloadOrchestrator>>> = OnceLock::new();
 
+/// Worker thread context containing shared state
+#[derive(Clone)]
+struct WorkerContext {
+    download_states: Arc<DashMap<String, DownloadState>>,
+    http_semaphore: Arc<Semaphore>,
+    active_downloads: Arc<AtomicUsize>,
+    running: Arc<AtomicBool>,
+}
+
 /// Configuration for download orchestrator
 #[derive(Debug, Clone)]
 pub struct OrchestratorConfig {
@@ -553,11 +562,10 @@ impl WorkerHealthMonitor {
         // Signal monitoring stop with release ordering to ensure proper shutdown coordination
         self.monitoring_active.store(false, documentation::shutdown_signal_ordering());
         
-        if let Some(handle) = self.monitor_handle.lock().take() {
-            if let Err(e) = handle.join() {
+        if let Some(handle) = self.monitor_handle.lock().take()
+            && let Err(e) = handle.join() {
                 tracing::error!("❌ Health monitoring thread failed to join: {:?}", e);
             }
-        }
         
         tracing::info!("🛑 Worker health monitoring stopped");
     }
@@ -882,10 +890,12 @@ impl DownloadOrchestrator {
     ) -> anyhow::Result<thread::JoinHandle<()>> {
         let job_receiver = self.job_receiver.clone();
         let result_sender = self.result_sender.clone();
-        let download_states = Arc::clone(&self.download_states);
-        let http_semaphore = Arc::clone(&self.http_semaphore);
-        let active_downloads = Arc::clone(&self.active_downloads);
-        let running = Arc::clone(&self.running);
+        let context = WorkerContext {
+            download_states: Arc::clone(&self.download_states),
+            http_semaphore: Arc::clone(&self.http_semaphore),
+            active_downloads: Arc::clone(&self.active_downloads),
+            running: Arc::clone(&self.running),
+        };
 
         let handle = thread::Builder::new()
             .name(format!("download-worker-{}", worker_id))
@@ -894,10 +904,7 @@ impl DownloadOrchestrator {
                     worker_id,
                     job_receiver,
                     result_sender,
-                    download_states,
-                    http_semaphore,
-                    active_downloads,
-                    running,
+                    context,
                     worker_health,
                 );
             })
@@ -1165,10 +1172,7 @@ impl DownloadOrchestrator {
         worker_id: usize,
         job_receiver: Receiver<DownloadJob>,
         result_sender: Sender<DownloadResult>,
-        download_states: Arc<DashMap<String, DownloadState>>,
-        http_semaphore: Arc<Semaphore>,
-        active_downloads: Arc<AtomicUsize>,
-        running: Arc<std::sync::atomic::AtomicBool>,
+        context: WorkerContext,
         health_status: Arc<WorkerHealthStatus>,
     ) {
         tracing::info!("🔧 Worker {} started with health monitoring", worker_id);
@@ -1192,7 +1196,7 @@ impl DownloadOrchestrator {
 
         // **Memory Ordering**: Acquire load ensures we observe shutdown signal with proper
         // ordering to see all cleanup operations that happened-before the shutdown
-        while MemoryOrderingValidator::validate_acquire_load_operation(&running, "worker_shutdown_check") {
+        while MemoryOrderingValidator::validate_acquire_load_operation(&context.running, "worker_shutdown_check") {
             // Send periodic heartbeat
             if last_heartbeat.elapsed() >= heartbeat_interval {
                 health_status.heartbeat();
@@ -1215,7 +1219,7 @@ impl DownloadOrchestrator {
                     }
                     
                     // Update state to in-progress
-                    if let Some(mut state) = download_states.get_mut(&file_key) {
+                    if let Some(mut state) = context.download_states.get_mut(&file_key) {
                         state.status = DownloadStatus::InProgress;
                         state.started_at = Some(Instant::now());
                         state.worker_id = Some(worker_id);
@@ -1228,7 +1232,7 @@ impl DownloadOrchestrator {
                         AtomicOrdering::Release,
                         FetchOperationPurpose::PublishingState,
                     );
-                    active_downloads.fetch_add(1, AtomicOrdering::Release);
+                    context.active_downloads.fetch_add(1, AtomicOrdering::Release);
 
                     tracing::info!(
                         "🔄 Worker {} processing: {} (priority: {:?}, size: {} bytes)",
@@ -1250,7 +1254,7 @@ impl DownloadOrchestrator {
                         let start_time = Instant::now();
                         
                         // Acquire HTTP semaphore permit
-                        let _permit = match http_semaphore.acquire().await {
+                        let _permit = match context.http_semaphore.acquire().await {
                             Ok(permit) => permit,
                             Err(e) => {
                                 tracing::error!("❌ Worker {} failed to acquire HTTP permit: {}", worker_id, e);
@@ -1267,8 +1271,8 @@ impl DownloadOrchestrator {
                         };
 
                         // Check if file already exists with correct size
-                        if let Ok(metadata) = tokio::fs::metadata(&job.destination).await {
-                            if metadata.len() == job.file_info.size {
+                        if let Ok(metadata) = tokio::fs::metadata(&job.destination).await
+                            && metadata.len() == job.file_info.size {
                                 tracing::info!(
                                     "💾 Worker {} skipping existing file: {} ({} bytes)",
                                     worker_id, job.file_info.path, job.file_info.size
@@ -1283,11 +1287,10 @@ impl DownloadOrchestrator {
                                     checksum_valid: true,
                                 };
                             }
-                        }
 
                         // Create parent directory
-                        if let Some(parent) = job.destination.parent() {
-                            if let Err(e) = tokio::fs::create_dir_all(parent).await {
+                        if let Some(parent) = job.destination.parent()
+                            && let Err(e) = tokio::fs::create_dir_all(parent).await {
                                 tracing::error!("❌ Worker {} failed to create directory {:?}: {}", worker_id, parent, e);
                                 return DownloadResult {
                                     job: job.clone(),
@@ -1299,7 +1302,6 @@ impl DownloadOrchestrator {
                                     checksum_valid: false,
                                 };
                             }
-                        }
 
                         // Perform actual download using HTTP client
                         let http_client = progresshub_client_http::HttpClient::default();
@@ -1374,7 +1376,7 @@ impl DownloadOrchestrator {
                     }
 
                     // Update final state
-                    if let Some(mut state) = download_states.get_mut(&file_key) {
+                    if let Some(mut state) = context.download_states.get_mut(&file_key) {
                         state.status = if result.success {
                             DownloadStatus::Completed
                         } else {
@@ -1390,7 +1392,7 @@ impl DownloadOrchestrator {
                         AtomicOrdering::Release,
                         FetchOperationPurpose::PublishingState,
                     );
-                    active_downloads.fetch_sub(1, AtomicOrdering::Release);
+                    context.active_downloads.fetch_sub(1, AtomicOrdering::Release);
 
                     // Report result to orchestrator
                     if let Err(e) = result_sender.send(result.clone()) {
@@ -1399,12 +1401,11 @@ impl DownloadOrchestrator {
                     }
 
                     // Report completion result if completion tracking is enabled
-                    if let Some(ref completion_sender) = job.completion_sender {
-                        if let Err(e) = completion_sender.send(result) {
+                    if let Some(ref completion_sender) = job.completion_sender
+                        && let Err(e) = completion_sender.send(result) {
                             tracing::error!("❌ Worker {} failed to send completion result: {}", worker_id, e);
                             health_status.job_failed();
                         }
-                    }
                 }
                 Err(crossbeam_channel::RecvTimeoutError::Timeout) => {
                     // Normal timeout, continue loop (heartbeat will be sent on next iteration if needed)
@@ -1494,10 +1495,12 @@ impl DownloadOrchestrator {
                             let worker_id = metrics.worker_id;
                             let job_receiver_clone = job_receiver.clone();
                             let result_sender_clone = result_sender.clone();
-                            let download_states_clone = Arc::clone(&download_states);
-                            let http_semaphore_clone = Arc::clone(&http_semaphore);
-                            let active_downloads_clone = Arc::clone(&active_downloads);
-                            let running_clone = Arc::clone(&running);
+                            let context_clone = WorkerContext {
+                                download_states: Arc::clone(&download_states),
+                                http_semaphore: Arc::clone(&http_semaphore),
+                                active_downloads: Arc::clone(&active_downloads),
+                                running: Arc::clone(&running),
+                            };
                             let worker_health_clone = Arc::clone(&worker_health);
                             
                             match thread::Builder::new()
@@ -1507,10 +1510,7 @@ impl DownloadOrchestrator {
                                         worker_id,
                                         job_receiver_clone,
                                         result_sender_clone,
-                                        download_states_clone,
-                                        http_semaphore_clone,
-                                        active_downloads_clone,
-                                        running_clone,
+                                        context_clone,
                                         worker_health_clone,
                                     );
                                 }) {
@@ -1616,8 +1616,8 @@ impl DownloadOrchestrator {
                 let job = queue.pop();
                 
                 // DIAGNOSTIC: Track large file job dequeue operations
-                if let Some(ref job) = job {
-                    if job.file_info.size > 1_000_000_000 {  // > 1GB
+                if let Some(ref job) = job
+                    && job.file_info.size > 1_000_000_000 {  // > 1GB
                         tracing::info!(
                             "🔍 LARGE FILE DEQUEUE: Job scheduler popped {} from priority queue (priority: {:?}, size: {} bytes, queue size: {} -> {})",
                             job.file_info.path,
@@ -1627,7 +1627,6 @@ impl DownloadOrchestrator {
                             queue.len()
                         );
                     }
-                }
                 
                 job
             };

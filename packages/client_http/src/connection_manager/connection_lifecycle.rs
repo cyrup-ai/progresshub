@@ -200,7 +200,7 @@ impl ConnectionManager {
     ///
     /// # Errors
     /// Returns error if connection test fails or times out after all retries
-    pub async fn test_connection(&self) -> Result<(), HttpClientError> {
+    pub fn test_connection(&self) -> Result<(), HttpClientError> {
         debug!(
             endpoint = %self.endpoint,
             server_name = %self.server_name,

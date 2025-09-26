@@ -62,7 +62,7 @@ impl ChunkFetcher {
     /// # Errors
     /// Returns `ChunkError` if there are issues with chunk size calculation or validation,
     /// though this function typically falls back to heuristics rather than failing.
-    pub async fn fetch_optimal_chunk_size(&self, _url: &str, file_size: u64) -> ChunkResult<u64> {
+    pub fn fetch_optimal_chunk_size(&self, _url: &str, file_size: u64) -> ChunkResult<u64> {
         // Since quyc handles partitioning automatically with smart defaults,
         // we use file size heuristics without needing HEAD requests
         let optimal_size = Self::calculate_default_chunk_size(file_size);
@@ -70,7 +70,7 @@ impl ChunkFetcher {
             "Using quyc automatic partitioning with calculated chunk size: {}",
             optimal_size
         );
-        return Ok(optimal_size);
+        Ok(optimal_size)
 
     }
 
@@ -98,7 +98,6 @@ impl ChunkFetcher {
                 total_file_size: config.total_file_size,
                 expected_hash: config.expected_hash.clone(),
             })
-            .await
             {
                 Ok(()) => {
                     debug!(
@@ -145,7 +144,7 @@ impl ChunkFetcher {
     #[allow(clippy::too_many_lines)]
     // Function complexity is justified here as it handles the complete HTTP chunk download pipeline
     // Breaking this into smaller functions would reduce performance and increase complexity
-    pub async fn download_single_chunk(config: DownloadChunkConfig<'_>) -> ChunkResult<()> {
+    pub fn download_single_chunk(config: DownloadChunkConfig<'_>) -> ChunkResult<()> {
         tracing::info!(
             "🚀 DOWNLOAD DEBUG: Starting chunk download - range {}-{} for URL: {}",
             config.start,

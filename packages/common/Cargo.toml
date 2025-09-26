@@ -15,7 +15,7 @@ categories = ["data-structures", "development-tools"]
 flume = "0.11.1"
 
 # Zero-allocation streaming primitives
-ystream = { path = "../../ystream" }
+ystream = { workspace = true }
 
 # Serialization
 serde = { version = "1.0.219", features = ["derive"] }

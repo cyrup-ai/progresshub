@@ -138,16 +138,11 @@ pub enum HttpClientError {
 }
 
 /// HTTP authentication methods
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub enum HttpAuth {
     /// Anonymous connection (testing only)
+    #[default]
     Anonymous,
-}
-
-impl Default for HttpAuth {
-    fn default() -> Self {
-        Self::Anonymous
-    }
 }
 
 /// Production-ready HTTP client with connection pooling and retry logic

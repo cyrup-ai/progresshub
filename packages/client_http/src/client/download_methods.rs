@@ -29,7 +29,7 @@ impl HttpClient {
     /// - The HTTP connection fails to establish due to network issues
     /// - Stream processing fails during response reading
     /// - The request times out
-    pub async fn request(
+    pub fn request(
         &self,
         path: &str,
     ) -> Result<impl Stream<Item = Result<Bytes, HttpClientError>> + Send, HttpClientError> {

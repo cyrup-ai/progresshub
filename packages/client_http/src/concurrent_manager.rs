@@ -97,6 +97,7 @@ pub struct ThreadPoolManager {
 
 impl ThreadPoolManager {
     /// Create a new thread pool manager with cancellation support
+    #[must_use] 
     pub fn new() -> Self {
         Self {
             abort_handles: Vec::new(),
@@ -115,6 +116,7 @@ impl ThreadPoolManager {
     }
 
     /// Get a clone of the cancellation token for task coordination
+    #[must_use] 
     pub fn cancellation_token(&self) -> CancellationToken {
         self.cancellation_token.clone()
     }
@@ -136,6 +138,9 @@ impl ThreadPoolManager {
     /// # Returns
     /// * `Ok(())` - All tasks completed gracefully
     /// * `Err(usize)` - Number of tasks that were forcefully cancelled due to timeout
+    /// 
+    /// # Errors
+    /// Returns the number of tasks that could not be gracefully shut down within the timeout period
     pub async fn shutdown_graceful(self, timeout: std::time::Duration) -> Result<(), usize> {
         // First request graceful shutdown
         self.request_shutdown();
@@ -180,11 +185,13 @@ impl ThreadPoolManager {
     }
 
     /// Get the number of active tasks
+    #[must_use] 
     pub fn active_task_count(&self) -> usize {
         self.abort_handles.len()
     }
 
     /// Check if shutdown has been requested
+    #[must_use] 
     pub fn is_shutdown_requested(&self) -> bool {
         self.cancellation_token.is_cancelled()
     }
@@ -213,6 +220,7 @@ impl ConcurrentChunkManager {
     }
 
     /// Get a reference to the thread pool manager for shutdown control
+    #[must_use] 
     pub fn thread_pool(&self) -> &ThreadPoolManager {
         &self.thread_pool
     }
@@ -228,6 +236,9 @@ impl ConcurrentChunkManager {
     }
 
     /// Shutdown gracefully with timeout, consuming the manager
+    /// 
+    /// # Errors
+    /// Returns the number of tasks that could not be gracefully shut down within the timeout period
     pub async fn shutdown(self, timeout: std::time::Duration) -> Result<(), usize> {
         self.thread_pool.shutdown_graceful(timeout).await
     }
@@ -306,8 +317,7 @@ impl ConcurrentChunkManager {
         // Get ETag-based optimal chunk size
         let optimal_chunk_size = self
             .fetcher
-            .fetch_optimal_chunk_size(url, file_size)
-            .await?;
+            .fetch_optimal_chunk_size(url, file_size)?;
 
         // Calculate ETag-based chunking strategy using server-determined chunk size
         let strategy = ChunkStrategy::calculate_from_chunk_size(optimal_chunk_size, file_size);
@@ -468,7 +478,6 @@ impl ConcurrentChunkManager {
 
     /// Create a download task for a single range with concurrency control and cancellation support
     fn create_range_download_task(
-        &mut self,
         range: &FileRange,
         config: &RangeTaskConfig<'_>,
         progress: &RangeProgressTracking,
@@ -500,11 +509,12 @@ impl ConcurrentChunkManager {
             );
             total_downloaded.fetch_add(existing_bytes, std::sync::atomic::Ordering::Relaxed);
             // Return a completed task for consistency
-            let handle = tokio::spawn(async move { Ok(()) });
-            return handle;
+            return tokio::spawn(async move { Ok(()) });
         }
 
-        let handle = tokio::spawn(async move {
+        // JoinHandle doesn't implement Clone, so we return it directly
+        // The calling function will store it in the thread pool
+        tokio::spawn(async move {
             // Check for cancellation before starting
             if cancellation_token.is_cancelled() {
                 tracing::info!("Range {} download cancelled before start", range.index);
@@ -575,11 +585,7 @@ impl ConcurrentChunkManager {
             }
 
             result
-        });
-
-        // JoinHandle doesn't implement Clone, so we return it directly
-        // The calling function will store it in the thread pool
-        handle
+        })
     }
 
     /// Process download task results and collect any errors
@@ -796,7 +802,7 @@ impl ConcurrentChunkManager {
                 return Err(ChunkError::WriteError("Download cancelled during task creation".to_string()));
             }
 
-            let handle = self.create_range_download_task(
+            let handle = Self::create_range_download_task(
                 &range,
                 &task_config,
                 &progress_tracking,

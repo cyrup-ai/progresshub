@@ -5,7 +5,6 @@
 
 use crate::DownloadResult;
 use anyhow::Result;
-use progresshub_progress;
 use std::path::PathBuf;
 
 /// Main ProgressHub struct that provides the fluent builder API

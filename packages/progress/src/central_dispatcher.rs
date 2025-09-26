@@ -243,7 +243,7 @@ impl CentralProgressDispatcher {
                                 raw_event
                                     .finalization
                                     .as_ref()
-                                    .map(|f| std::mem::discriminant(f))
+                                    .map(std::mem::discriminant)
                             );
 
                             // ALWAYS process progress state updates first - never block these
@@ -522,9 +522,7 @@ impl CentralProgressDispatcher {
     }
 
     /// Check if all downloads are complete
-
     /// Dispatch ProgressCalculator snapshots to CLI/TUI
-    ///
     /// Creates ProgressCalculator snapshots with ALL formatting methods and dispatches
     /// via flume channels. CLI/TUI perform ZERO calculations.
     async fn dispatch_progress_snapshots(&self) {
@@ -645,7 +643,7 @@ impl CentralProgressDispatcher {
                     };
 
                     let mut file_metadata = OrdMap::new();
-                    let absolute_path = model_data.model_cache_dir.join(&file_path);
+                    let absolute_path = model_data.model_cache_dir.join(file_path);
                     file_metadata.insert("local_path".to_string(), absolute_path.to_string_lossy().to_string());
                     
                     let file_progress = ImmutableFileProgress {
@@ -938,7 +936,7 @@ impl CentralProgressDispatcher {
                 if self
                     .filesystem_evaluator
                     .validate_range_completion(
-                        &std::path::Path::new(&raw_event.local_filepath),
+                        std::path::Path::new(&raw_event.local_filepath),
                         *range_start,
                         *range_end,
                     )
@@ -955,8 +953,8 @@ impl CentralProgressDispatcher {
             }
             FinalizationLevel::FileComplete { final_file_path } => {
                 // Check if this file is from cache - cached files don't need .part finalization
-                if let Some(file_state) = self.file_states.get(file_key) {
-                    if file_state.from_cache {
+                if let Some(file_state) = self.file_states.get(file_key)
+                    && file_state.from_cache {
                         // Cached files are already complete - just mark as finalized
                         if let Some(file_state) = self.file_states.get_mut(file_key) {
                             file_state.is_file_finalized = true;
@@ -968,7 +966,6 @@ impl CentralProgressDispatcher {
                             .await?;
                         return Ok(());
                     }
-                }
 
                 // FileComplete events indicate the file download is complete
                 // Use FilesystemProgressEvaluator to handle actual finalization
@@ -983,7 +980,7 @@ impl CentralProgressDispatcher {
 
                 // Use FilesystemProgressEvaluator for atomic finalization
                 if crate::filesystem_evaluator::FilesystemProgressEvaluator::validate_and_finalize_file_static(
-                    &partial_path,
+                    partial_path,
                     final_path,
                     raw_event.total_bytes,
                 ).await? {
@@ -1007,8 +1004,7 @@ impl CentralProgressDispatcher {
                     );
 
                     // Return error to propagate failure up the call chain
-                    return Err(Box::new(std::io::Error::new(
-                        std::io::ErrorKind::Other,
+                    return Err(Box::new(std::io::Error::other(
                         format!(
                             "File finalization failed for {}: .part file missing or size mismatch",
                             final_file_path

@@ -59,14 +59,10 @@ impl<T: ProgressHandler + ?Sized> ProgressHandler for std::sync::Arc<T> {
 
 /// Configuration for download operations.
 #[derive(Debug, Clone)]
+#[derive(Default)]
 pub struct DownloadConfig {
     /// Optional quantization filter (e.g., "Q4_K_M", "Q8_0", "F16")
     /// When specified, only files matching this quantization will be downloaded
     pub quantization: Option<String>,
 }
 
-impl Default for DownloadConfig {
-    fn default() -> Self {
-        Self { quantization: None }
-    }
-}

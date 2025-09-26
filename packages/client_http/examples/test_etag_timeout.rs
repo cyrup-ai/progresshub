@@ -31,7 +31,7 @@ async fn main() {
     println!("📍 URL: {}", test_url);
 
     let start_time = std::time::Instant::now();
-    match fetcher.fetch_optimal_chunk_size(test_url, file_size).await {
+    match fetcher.fetch_optimal_chunk_size(test_url, file_size) {
         Ok(chunk_size) => {
             let duration = start_time.elapsed();
             println!("✅ ETag fetch successful!");
