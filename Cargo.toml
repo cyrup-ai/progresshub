@@ -9,80 +9,12 @@ members = [
     "packages/tui",
     "packages/examples/default-cli",
     "packages/examples/custom-display",
-    "forks/termcolor",
 ]
 
 # Set packages/progresshub as the default package - the SOLE AND ONLY binary in the workspace
 default-members = ["packages/progresshub"]
 
-exclude = [
-    "forks/xet-core",
-    "forks/xet-core/cas_client",
-    "forks/xet-core/cas_object", 
-    "forks/xet-core/cas_types",
-    "forks/xet-core/chunk_cache",
-    "forks/xet-core/chunk_cache_bench",
-    "forks/xet-core/data",
-    "forks/xet-core/deduplication",
-    "forks/xet-core/error_printer",
-    "forks/xet-core/file_utils",
-    "forks/xet-core/hf_xet",
-    "forks/xet-core/hf_xet_thin_wasm",
-    "forks/xet-core/hf_xet_wasm",
-    "forks/xet-core/mdb_shard",
-    "forks/xet-core/merklehash",
-    "forks/xet-core/parutils",
-    "forks/xet-core/progress_tracking",
-    "forks/xet-core/utils",
-    "forks/xet-core/xet_threadpool",
-]
-
-# FORKS DIRECTORY EXCLUDED FROM WORKSPACE - APPROVED BY DAVID MAPLE 07/28/2025
-# The following xet-core crates are excluded from workspace-level clippy checks:
-# "forks/xet-core/cas_client", "forks/xet-core/cas_object", "forks/xet-core/cas_types",
-# "forks/xet-core/chunk_cache", "forks/xet-core/chunk_cache_bench", "forks/xet-core/data",
-# "forks/xet-core/deduplication", "forks/xet-core/error_printer", "forks/xet-core/file_utils",
-# "forks/xet-core/hf_xet", "forks/xet-core/hf_xet_thin_wasm", "forks/xet-core/mdb_shard",
-# "forks/xet-core/merklehash", "forks/xet-core/parutils", "forks/xet-core/progress_tracking",
-# "forks/xet-core/utils", "forks/xet-core/xet_threadpool"
 resolver = "3"
-
-# Force version resolution to latest compatible versions
-[workspace.dependencies]
-# Zero-allocation streaming primitives - alternative to tokio runtimes
-ystream = { git = "https://github.com/cyrup-ai/ystream", branch = "main" }
-
-crypto-bigint = "=0.7.0-rc.0"
-cedar-policy = "=2.5.0"
-cedar-policy-core = "=2.5.0"  
-cedar-policy-validator = "=2.5.0"
-spade = "=2.15.0"
-aws-sdk-secretsmanager = "=1.85.0"
-
-# Fix async-graphql version conflict from cryypt dependencies (removed - not used in current codebase)
-# async-graphql = "=7.0.15"
-# async-graphql-derive = "=7.0.15"
-# async-graphql-parser = "=7.0.15"
-# async-graphql-value = "=7.0.15"
-
-
-# FORKS DIRECTORY EXCLUSION - APPROVED BY DAVID MAPLE 07/28/2025
-# The forks/ directory contains forked xet-core dependencies that are excluded
-# from production code quality requirements and clippy warning elimination.
-
-# APPROVED BY DAVID MAPLE 07/28/2025
-# Exclude all clippy warnings from forked xet-core crates
-[workspace.lints.clippy]
-all = { level = "deny", priority = -1 }
-pedantic = { level = "deny", priority = -1 }
-
-[workspace.lints.clippy.tabs_in_doc_comments]
-level = "allow"
-priority = 1
-
-# Forked crates exclusions - APPROVED BY DAVID MAPLE 07/28/2025
-[workspace.lints.rust]
-warnings = { level = "deny", priority = -1 }
 
 [workspace.package]
 version = "0.1.0"
@@ -94,10 +26,7 @@ repository = "https://github.com/cyrup-ai/progresshub"
 keywords = ["encryption", "cryptography", "postquant", "cipher", "security"]
 categories = ["cryptography", "authentication"]
 
-# Force async-graphql to use git version with requires_scopes field support (removed - not used in current codebase)
-# [patch.crates-io]
-# async-graphql = { git = "https://github.com/async-graphql/async-graphql", branch = "master" }
-# async-graphql-derive = { git = "https://github.com/async-graphql/async-graphql", branch = "master" }
-# async-graphql-parser = { git = "https://github.com/async-graphql/async-graphql", branch = "master" }
-# async-graphql-value = { git = "https://github.com/async-graphql/async-graphql", branch = "master" }
+[workspace.dependencies]
+ystream = { git = "https://github.com/cyrup-ai/ystream", branch = "main" }
+
 
