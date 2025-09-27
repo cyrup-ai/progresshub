@@ -37,20 +37,20 @@ futures-util = "0.3.31"
 dirs = "6.0.0"
 
 # Argument parsing with derive features
-clap = { version = "4.5.47", features = ["derive"] }
+clap = { version = "4.5.48", features = ["derive"] }
 
 # Error handling and async runtime
-anyhow = "1.0.99"
+anyhow = "1.0.100"
 tokio = { version = "1.47.1", features = ["full"] }
 
 # Structured logging
 tracing = "0.1.41"
-tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+tracing-subscriber = { version = "0.3.20", features = ["env-filter"] }
 tracing-appender = "0.2.3"
 termcolor = { git = "https://github.com/cyrup-ai/termcolor", branch = "main" }
 
 # Serialization for OneOrMany support
-serde = { version = "1.0.219", features = ["derive"] }
+serde = { version = "1.0.228", features = ["derive"] }
 sha1 = "0.10.6"
 sha2 = "0.10.9"
 

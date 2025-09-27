@@ -18,10 +18,10 @@ flume = "0.11.1"
 ystream = { workspace = true }
 
 # Serialization
-serde = { version = "1.0.219", features = ["derive"] }
+serde = { version = "1.0.228", features = ["derive"] }
 
 # Error handling
-anyhow = "1.0.98"
+anyhow = "1.0.100"
 
 # Hash generation for model collision prevention
 sha1 = "0.10.6"

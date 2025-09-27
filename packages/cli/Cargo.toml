@@ -24,26 +24,26 @@ progresshub-progress = { path = "../progress" }
 
 
 # Error handling
-anyhow = "1.0.98"
-thiserror = "2.0.12"
+anyhow = "1.0.100"
+thiserror = "2.0.16"
 
 # Async runtime
 tokio = { version = "1.47.1", features = ["full"] }
 
 # Logging
 tracing = "0.1.41"
-tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+tracing-subscriber = { version = "0.3.20", features = ["env-filter"] }
 
 # CLI argument parsing
-clap = { version = "4.5.42", features = ["derive"] }
+clap = { version = "4.5.48", features = ["derive"] }
 
 # Terminal UI and display - keep display-related dependencies
-console = "0.16.0"
+console = "0.16.1"
 colored = "3.0.0"
 
 # Serialization
-serde = { version = "1.0.219", features = ["derive"] }
-serde_json = "1.0.142"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.145"
 
 # Utilities
 dirs = "6.0.0"
@@ -52,12 +52,12 @@ dirs = "6.0.0"
 flume = "0.11.1"
 
 # Display and terminal utilities
-chrono = { version = "0.4.41", features = ["serde"] }
+chrono = { version = "0.4.42", features = ["serde"] }
 termcolor = { git = "https://github.com/cyrup-ai/termcolor", branch = "main" }
 atty = "0.2.14"
 term_size = "0.3.2"
 lazy_static = "1.5.0"
-regex = "1.11.1"
+regex = "1.11.3"
 futures = "0.3.31"
 tokio-stream = "0.1.17"
 im = "15.1.0"

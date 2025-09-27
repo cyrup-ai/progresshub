@@ -467,7 +467,7 @@ dependencies = [
 [[package]]
 name = "async_task"
 version = "0.1.0"
-source = "git+https://github.com/cyrup-ai/cryypt?branch=main#5568db0edd17e0af7cb902e68dc757d1a6daca2a"
+source = "git+https://github.com/cyrup-ai/cryypt?branch=main#f018a95bff1b9bf02577b5aa44c3174e5e822630"
 dependencies = [
  "futures",
  "pin-project-lite",
@@ -1929,7 +1929,7 @@ dependencies = [
 [[package]]
 name = "cryypt"
 version = "0.1.0"
-source = "git+https://github.com/cyrup-ai/cryypt?branch=main#5568db0edd17e0af7cb902e68dc757d1a6daca2a"
+source = "git+https://github.com/cyrup-ai/cryypt?branch=main#f018a95bff1b9bf02577b5aa44c3174e5e822630"
 dependencies = [
  "cryypt_cipher",
  "cryypt_common",
@@ -1945,7 +1945,7 @@ dependencies = [
 [[package]]
 name = "cryypt_cipher"
 version = "0.1.0"
-source = "git+https://github.com/cyrup-ai/cryypt?branch=main#5568db0edd17e0af7cb902e68dc757d1a6daca2a"
+source = "git+https://github.com/cyrup-ai/cryypt?branch=main#f018a95bff1b9bf02577b5aa44c3174e5e822630"
 dependencies = [
  "aes",
  "aes-gcm",
@@ -2003,7 +2003,7 @@ dependencies = [
 [[package]]
 name = "cryypt_common"
 version = "0.1.0"
-source = "git+https://github.com/cyrup-ai/cryypt?branch=main#5568db0edd17e0af7cb902e68dc757d1a6daca2a"
+source = "git+https://github.com/cyrup-ai/cryypt?branch=main#f018a95bff1b9bf02577b5aa44c3174e5e822630"
 dependencies = [
  "anyhow",
  "backtrace",
@@ -2023,7 +2023,7 @@ dependencies = [
 [[package]]
 name = "cryypt_compression"
 version = "0.1.0"
-source = "git+https://github.com/cyrup-ai/cryypt?branch=main#5568db0edd17e0af7cb902e68dc757d1a6daca2a"
+source = "git+https://github.com/cyrup-ai/cryypt?branch=main#f018a95bff1b9bf02577b5aa44c3174e5e822630"
 dependencies = [
  "aes-gcm",
  "arc-swap",
@@ -2078,7 +2078,7 @@ dependencies = [
 [[package]]
 name = "cryypt_hashing"
 version = "0.1.0"
-source = "git+https://github.com/cyrup-ai/cryypt?branch=main#5568db0edd17e0af7cb902e68dc757d1a6daca2a"
+source = "git+https://github.com/cyrup-ai/cryypt?branch=main#f018a95bff1b9bf02577b5aa44c3174e5e822630"
 dependencies = [
  "aes-gcm",
  "arc-swap",
@@ -2135,7 +2135,7 @@ dependencies = [
 [[package]]
 name = "cryypt_jwt"
 version = "0.1.0"
-source = "git+https://github.com/cyrup-ai/cryypt?branch=main#5568db0edd17e0af7cb902e68dc757d1a6daca2a"
+source = "git+https://github.com/cyrup-ai/cryypt?branch=main#f018a95bff1b9bf02577b5aa44c3174e5e822630"
 dependencies = [
  "aes-gcm",
  "arc-swap",
@@ -2190,7 +2190,7 @@ dependencies = [
 [[package]]
 name = "cryypt_key"
 version = "0.1.0"
-source = "git+https://github.com/cyrup-ai/cryypt?branch=main#5568db0edd17e0af7cb902e68dc757d1a6daca2a"
+source = "git+https://github.com/cyrup-ai/cryypt?branch=main#f018a95bff1b9bf02577b5aa44c3174e5e822630"
 dependencies = [
  "aes",
  "aes-gcm",
@@ -2252,7 +2252,7 @@ dependencies = [
 [[package]]
 name = "cryypt_pqcrypto"
 version = "0.1.0"
-source = "git+https://github.com/cyrup-ai/cryypt?branch=main#5568db0edd17e0af7cb902e68dc757d1a6daca2a"
+source = "git+https://github.com/cyrup-ai/cryypt?branch=main#f018a95bff1b9bf02577b5aa44c3174e5e822630"
 dependencies = [
  "aes-gcm",
  "arc-swap",
@@ -2305,7 +2305,7 @@ dependencies = [
 [[package]]
 name = "cryypt_quic"
 version = "0.1.0"
-source = "git+https://github.com/cyrup-ai/cryypt?branch=main#5568db0edd17e0af7cb902e68dc757d1a6daca2a"
+source = "git+https://github.com/cyrup-ai/cryypt?branch=main#f018a95bff1b9bf02577b5aa44c3174e5e822630"
 dependencies = [
  "aes-gcm",
  "anyhow",
@@ -2387,7 +2387,7 @@ dependencies = [
 [[package]]
 name = "cryypt_vault"
 version = "0.1.0"
-source = "git+https://github.com/cyrup-ai/cryypt?branch=main#5568db0edd17e0af7cb902e68dc757d1a6daca2a"
+source = "git+https://github.com/cyrup-ai/cryypt?branch=main#f018a95bff1b9bf02577b5aa44c3174e5e822630"
 dependencies = [
  "argon2",
  "async-stream",
@@ -4491,7 +4491,7 @@ dependencies = [
 [[package]]
 name = "lib_bandwydth"
 version = "0.1.0"
-source = "git+https://github.com/cyrup-ai/bandwydth?branch=main#aadbad63a67e4386be4fc55404d4ee065c69f2f1"
+source = "git+https://github.com/cyrup-ai/bandwydth?branch=main#3e188535de8df68ef41e4632c6ef02d12d859127"
 dependencies = [
  "chrono",
  "clap",
@@ -8064,7 +8064,7 @@ dependencies = [
 [[package]]
 name = "surrealdb"
 version = "3.0.0"
-source = "git+https://github.com/cyrup-ai/cryypt?branch=main#5568db0edd17e0af7cb902e68dc757d1a6daca2a"
+source = "git+https://github.com/cyrup-ai/cryypt?branch=main#f018a95bff1b9bf02577b5aa44c3174e5e822630"
 dependencies = [
  "anyhow",
  "arrayvec",
@@ -8107,7 +8107,7 @@ dependencies = [
 [[package]]
 name = "surrealdb-core"
 version = "3.0.0"
-source = "git+https://github.com/cyrup-ai/cryypt?branch=main#5568db0edd17e0af7cb902e68dc757d1a6daca2a"
+source = "git+https://github.com/cyrup-ai/cryypt?branch=main#f018a95bff1b9bf02577b5aa44c3174e5e822630"
 dependencies = [
  "addr",
  "affinitypool",
@@ -8223,7 +8223,7 @@ dependencies = [
 [[package]]
 name = "surrealdb-types"
 version = "3.0.0"
-source = "git+https://github.com/cyrup-ai/cryypt?branch=main#5568db0edd17e0af7cb902e68dc757d1a6daca2a"
+source = "git+https://github.com/cyrup-ai/cryypt?branch=main#f018a95bff1b9bf02577b5aa44c3174e5e822630"
 dependencies = [
  "anyhow",
  "bytes",
@@ -8243,7 +8243,7 @@ dependencies = [
 [[package]]
 name = "surrealdb-types-derive"
 version = "3.0.0"
-source = "git+https://github.com/cyrup-ai/cryypt?branch=main#5568db0edd17e0af7cb902e68dc757d1a6daca2a"
+source = "git+https://github.com/cyrup-ai/cryypt?branch=main#f018a95bff1b9bf02577b5aa44c3174e5e822630"
 dependencies = [
  "proc-macro2",
  "quote",
