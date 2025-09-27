@@ -25,7 +25,11 @@ progresshub-cli = { path = "../cli" }
 progresshub-tui = { path = "../tui", package = "progresshub-tui", optional = true }
 progresshub-config = { path = "../config" }
 progresshub-progress = { path = "../progress" }
-# lib_bandwydth = { git = "https://github.com/cyrup-ai/bandwydth", branch = "main" }  # Temporarily disabled due to cryypt dependency conflict
+lib_bandwydth = { workspace = true }
+cryypt = { workspace = true }
+cryypt_key = { workspace = true }
+cryypt_jwt = { workspace = true }
+cryypt_vault = { workspace = true }
 
 # Channel communication
 flume = "0.11.1"

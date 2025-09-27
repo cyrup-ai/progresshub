@@ -28,5 +28,12 @@ categories = ["cryptography", "authentication"]
 
 [workspace.dependencies]
 ystream = { git = "https://github.com/cyrup-ai/ystream", branch = "main" }
+lib_bandwydth = { git = "https://github.com/cyrup-ai/bandwydth", branch = "main" }
+cryypt = { git = "https://github.com/cyrup-ai/cryypt", branch = "main", package = "cryypt" }
+cryypt_key = { git = "https://github.com/cyrup-ai/cryypt", branch = "main", package = "cryypt_key" }
+cryypt_jwt = { git = "https://github.com/cyrup-ai/cryypt", branch = "main", package = "cryypt_jwt" }
+cryypt_vault = { git = "https://github.com/cyrup-ai/cryypt", branch = "main", package = "cryypt_vault" }
+
+
 
 

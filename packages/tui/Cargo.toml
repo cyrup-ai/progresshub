@@ -29,8 +29,11 @@ cyrup_sugars = { git = "https://github.com/cyrup-ai/cyrup-sugars", branch = "mai
 # Local dependencies - only config and progress for pure display logic
 progresshub-config = { path = "../config" }
 progresshub-progress = { path = "../progress" }
-# Temporarily commented out to avoid cryypt compilation errors during YStream integration
-# lib_bandwydth = { git = "https://github.com/cyrup-ai/bandwydth", branch = "main" }  # Temporarily disabled due to cryypt dependency conflict
+lib_bandwydth = { workspace = true }
+cryypt = { workspace = true }
+cryypt_key = { workspace = true }
+cryypt_jwt = { workspace = true }
+cryypt_vault = { workspace = true }
 
 # Error handling
 anyhow = "1.0.98"
